@@ -1,0 +1,339 @@
+/* GENA Landing Page Styles */
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(to right, #0f172a, #1e3a8a);
+  color: #f1f5f9;
+}
+
+h1 {
+  font-size: 2rem;
+  color: #38bdf8;
+  margin-bottom: 0.5rem;
+  text-align: left;
+}
+
+h2 {
+  border-bottom: 2px solid #38bdf8;
+  padding-bottom: 0.3rem;
+  margin-top: 2rem;
+  color: #facc15;
+}
+
+footer {
+  text-align: center;
+  padding: 2rem;
+  color: #94a3b8;
+}
+
+a {
+  color: #38bdf8;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+ul li {
+  margin-bottom: 0.5rem;
+}
+
+/* HERO SECTION */
+.hero-section {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 2rem 3rem;
+  background: radial-gradient(circle at left, #1e3a8a 0%, #0f172a 100%);
+  text-align: left;
+  gap: 2rem;
+  max-width: 1400px;
+  margin: auto;
+}
+
+.hero-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.hero-content .gena-logo {
+  width: 100px;
+  margin-bottom: 0.5rem;
+  filter: drop-shadow(0 0 8px #38bdf8);
+}
+
+.hero-robot {
+  display: none;
+}
+
+/* CONTENT SECTION */
+.content-section, .lightpaper-roadmap {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  flex-wrap: wrap;
+  max-width: 1400px;
+  margin: 2rem auto;
+  padding: 2rem 3rem;
+  gap: 2rem;
+}
+
+.info-block {
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  padding: 2rem;
+  margin: 2rem auto;
+  max-width: 90%;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.info-block h2 {
+  color: #facc15;
+  border-bottom: 2px solid #38bdf8;
+  padding-bottom: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+
+.tokenomics-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+.tokenomics-table th,
+.tokenomics-table td {
+  border: 1px solid #94a3b8;
+  padding: 0.75rem;
+  text-align: left;
+  background-color: rgba(15, 23, 42, 0.6);
+}
+
+.sidebar-nav {
+  position: fixed;
+  top: 2rem;
+  right: 2rem;
+  background-color: rgba(15, 23, 42, 0.9);
+  padding: 1rem 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 0 10px #00000050;
+  z-index: 1000;
+}
+
+.sidebar-nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar-nav li {
+  margin: 1rem 0;
+}
+
+.sidebar-nav a {
+  color: #38bdf8;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.sidebar-nav a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+  .hero-section, .content-section, .lightpaper-roadmap {
+    flex-direction: column;
+    padding: 1rem;
+  }
+
+  .hero-content h1 {
+    font-size: 1.5rem;
+  }
+
+  .hero-content .gena-logo {
+    width: 80px;
+  }
+
+  .info-block {
+    flex: 1 1 100%;
+  }
+
+  .sidebar-nav {
+    right: 1rem;
+    top: 1rem;
+  }
+
+  .sidebar-nav ul {
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 3rem;
+  background: radial-gradient(circle at left, #1e3a8a 0%, #0f172a 100%);
+}
+
+.logo-title {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.gena-logo {
+  width: 50px;
+}
+
+.site-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #38bdf8;
+}
+
+.top-menu {
+  display: flex;
+  gap: 2rem;
+}
+
+.top-menu a {
+  color: #38bdf8;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.top-menu a:hover {
+  text-decoration: underline;
+}
+
+.main-content {
+  padding: 3rem 5rem;
+}
+
+/* Purchase Page Layout */
+.purchase-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+  gap: 3rem;
+  padding: 3rem 5rem;
+}
+
+.purchase-form {
+  flex: 1;
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+}
+
+.purchase-form h2 {
+  color: #facc15;
+  margin-bottom: 1rem;
+}
+
+.purchase-form label {
+  display: block;
+  margin-top: 1rem;
+  color: #f1f5f9;
+}
+
+.purchase-form input {
+  width: 100%;
+  padding: 0.6rem;
+  margin-top: 0.3rem;
+  border: none;
+  border-radius: 6px;
+  background-color: #1e293b;
+  color: #fff;
+}
+
+.purchase-form button {
+  margin-top: 1.5rem;
+  padding: 0.8rem 1.5rem;
+  background-color: #38bdf8;
+  border: none;
+  border-radius: 6px;
+  color: #000;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.purchase-form button:hover {
+  background-color: #0ea5e9;
+}
+
+.purchase-image {
+  flex: 1;
+  text-align: center;
+}
+
+.purchase-image img {
+  max-width: 100%;
+  height: auto;
+  filter: drop-shadow(0 0 10px #38bdf8);
+}
+
+.purchase-image .blended-robot {
+  max-width: 100%;
+  height: auto;
+  background: linear-gradient(to right, #0f172a, #1e3a8a);
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 0 20px rgba(56, 189, 248, 0.4);
+}
+
+/* Add to existing .purchase-image to blend robot background */
+.purchase-image .blended-robot {
+  max-width: 100%;
+  height: auto;
+  background: linear-gradient(to right, #0f172a, #1e3a8a);
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 0 20px rgba(56, 189, 248, 0.4);
+}
+
+/* Improve alignment */
+.purchase-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch; /* makes both columns equal height */
+  gap: 3rem;
+  padding: 3rem 5rem;
+}
+
+.about-gena-block {
+  max-width: 1400px;
+  margin: 0 auto 2rem auto;
+  font-size: 1.1rem;
+  line-height: 1.6;
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background-color: rgba(15, 23, 42, 0.9);
+}
+
+.logo-section {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.nav-menu a {
+  margin-left: 1rem;
+  color: #f1f5f9;
+  font-weight: 500;
+}
+
+.nav-menu a.active {
+  color: #facc15;
+}
