@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Purchase GENA Tokens</title>
   <link rel="stylesheet" href="css/styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/ethers@6.7.0/dist/ethers.umd.min.js"></script>
 </head>
 <body>
 
@@ -15,53 +16,101 @@
       <span class="site-title">GENA Token</span>
     </div>
     <nav class="top-menu">
-      <a href="index.html">About</a>
+      <!-- a href="index.html">About<-->
       <!--a href="tokenomics.html">Tokenomics<-->
-      <a href="lightpaper.html">Lightpaper</a>
+      <!--a href="lightpaper.html">Lightpaper<-->
       <a href="roadmap.html">Roadmap</a>
-      <a href="gena-admin.html">Token Admin</a>
+      <!-- a href="gena-admin.html">Token Admin<-->
     </nav>
   </header>
 
   <!-- MAIN CONTENT -->
   <main class="main-content">
 
-    <!-- About GENA section -->
-    <section class="info-block about-gena-block">
-      <h2>About GENA</h2>
-      <p>🌟 <strong>GENA</strong>: General Network Asset<br/>
-GENA is a meme coin or digital token — think of it like a coupon on the internet that people can buy, sell, and trade.
-We will use GENA to raise money to build helpful websites and apps. These might include:<br><br>
- ✅ a job search tool<br>
- ✅ a money tracker<br>
- ✅ simple websites for small businesses<br><br>
-GENA is meant to be fun and simple, but also help raise money for these projects.</p>
+     <!-- HERO -->
+    <section class="hero-section">
+  <div class="hero-content">
+    <h1>Empowering Community Innovation with GENA</h1>
+    <p>
+      GENA is a meme coin — but with a twist. GENA (General Network Asset) is a 
+      micro-donation token designed to make giving fun, transparent, and impactful. 
+      Your donations help support meaningful projects like <strong>TraderSensei</strong> and 
+      <strong>Virland AI</strong>, with the long-term goal of funding even more community-driven 
+      innovations. <br><br>
+      <em>With your donation, you are helping bring new tools, platforms, and opportunities 
+      to life — empowering creators to build a better digital future.</em>
+    </p>
+  </div>
+</section>
 
-    </section>
 
-    <!-- Token Purchase Section -->
-    <section class="purchase-wrapper">
-      <!-- Purchase Form -->
-      <div class="purchase-form">
-        <h2>Buy GENA Tokens</h2>
-        <p>Start supporting the AISaaS and LooKK ecosystem today by purchasing GENA tokens.</p>
-        <form>
-          <label for="amount">Amount in USD:</label>
-          <input type="number" id="amount" placeholder="Enter USD value" required />
+    <!-- DONATION -->
+<section class="purchase-wrapper">
+  <div class="purchase-form">
+    <h2>Support GENA with a Donation</h2>
+    <p>Your donations help fund TraderSensei, Virland AI, and future community projects through transparent, decentralized giving.</p>
+    <form id="donationForm">
+      <label for="usdAmount">Donation Amount (USD):</label>
+      <input type="number" id="usdAmount" placeholder="Enter amount in USD" required />
 
-          <label for="wallet">Wallet Address:</label>
-          <input type="text" id="wallet" placeholder="Enter your wallet address" required />
+      <div id="ethEquivalent" style="margin-top: 0.5rem; font-weight: bold;"></div>
 
-          <button type="submit">Buy Tokens</button>
-        </form>
-      </div>
 
-      <!-- Robot -->
-      <div class="purchase-image">
-        <img src="assets/gena-robot.png" alt="GENA Robot" class="blended-robot"/>
-      </div>
-    </section>
+      <label for="crypto">Select Crypto:</label>
+      <select id="crypto" required>
+        <option value="">Select</option>
+        <option value="ETH">ETH</option>
+        <option value="USDC">USDC</option>
+      </select>
+
+      <label for="wallet">Your Wallet (sending from):</label>
+      <input type="text" id="wallet" placeholder="Connect wallet to autofill" readonly required />
+
+
+      <div id="walletBalance" style="margin-top: 1rem; font-weight: bold;"></div>
+
+      <button type="button" onclick="connectWallet()">Connect Wallet</button>
+      <button type="submit">Donate</button>
+    </form>
+    </form>
+
+      <p class="reward-info" style="margin-top: 1rem; font-weight: bold;">
+        🎉 <strong>GENA Rewards:</strong> For every $1 you donate, you will receive 100 GENA tokens as a thank-you. 
+        Rewards are processed manually and distributed to your connected wallet at the end of each day.
+      </p>
+</div>
+
+  </div>
+  
+</section>
+
+
   </main>
+  
+  <script src="js/config.js"></script>
+  <script src="js/loadGenaContract.js"></script>
+
+  <div class="info-block" style="margin: 2rem; padding: 1rem; border-top: 1px solid #ccc;">
+  <h3>Light Paper & Transparency</h3>
+  <p>
+    GENA is committed to transparency. You can review the current light paper, follow development progress, and see project updates here:
+  </p>
+  <ul>
+    <li>
+      📄 <strong>Light Paper</strong>: <a href="lightpaper.html" target="_blank">Read the GENA Light Paper</a>
+    </li>
+    <li>
+      🐙 <strong>GENA Smart Contract GitHub</strong>: <a href="https://github.com/jaypersanchez/gena.git" target="_blank">github.com/jaypersanchez/gena.git</a>
+    </li>
+    <li>
+      ▶️ <strong>YouTube</strong>: <a href="https://youtube.com/@jaypersanchez" target="_blank">youtube.com/@jaypersanchez</a>
+    </li>
+    <li>
+      𝕏 <strong>X (Twitter)</strong>: <a href="https://x.com/jaypersanchez" target="_blank">@jaypersanchez</a>
+    </li>
+  </ul>
+</div>
+
 
 </body>
 </html>
