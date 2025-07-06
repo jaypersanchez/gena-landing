@@ -16,7 +16,7 @@ const ROLES = {
   DEFAULT_ADMIN_ROLE: "0x" + "0".repeat(64)
 };
 
-const CONTRACT_ABI = [
+/*const CONTRACT_ABI = [
   {"inputs":[],"name":"MINTER_ROLE","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},
   {"inputs":[{"internalType":"uint256","name":"value","type":"uint256"}],"name":"burn","outputs":[],"stateMutability":"nonpayable","type":"function"},
   {"inputs":[],"name":"totalSupply","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},
@@ -27,7 +27,30 @@ const CONTRACT_ABI = [
   {"inputs":[],"name":"unpause","outputs":[],"stateMutability":"nonpayable","type":"function"},
   {"inputs":[{"internalType":"bytes32","name":"role","type":"bytes32"},{"internalType":"address","name":"account","type":"address"}],"name":"grantRole","outputs":[],"stateMutability":"nonpayable","type":"function"},
   {"inputs":[{"internalType":"bytes32","name":"role","type":"bytes32"},{"internalType":"address","name":"account","type":"address"}],"name":"revokeRole","outputs":[],"stateMutability":"nonpayable","type":"function"}
+];*/
+
+const CONTRACT_ABI = [
+  {"inputs":[],"name":"MINTER_ROLE","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},
+  {"inputs":[{"internalType":"uint256","name":"value","type":"uint256"}],"name":"burn","outputs":[],"stateMutability":"nonpayable","type":"function"},
+  {"inputs":[],"name":"totalSupply","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},
+  {"inputs":[],"name":"decimals","outputs":[{"internalType":"uint8","name":"","type":"uint8"}],"stateMutability":"view","type":"function"},
+  {"inputs":[{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"mint","outputs":[],"stateMutability":"nonpayable","type":"function"},
+  {"inputs":[{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"value","type":"uint256"}],"name":"transfer","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},
+  {"inputs":[],"name":"pause","outputs":[],"stateMutability":"nonpayable","type":"function"},
+  {"inputs":[],"name":"unpause","outputs":[],"stateMutability":"nonpayable","type":"function"},
+  {"inputs":[{"internalType":"bytes32","name":"role","type":"bytes32"},{"internalType":"address","name":"account","type":"address"}],"name":"grantRole","outputs":[],"stateMutability":"nonpayable","type":"function"},
+  {"inputs":[{"internalType":"bytes32","name":"role","type":"bytes32"},{"internalType":"address","name":"account","type":"address"}],"name":"revokeRole","outputs":[],"stateMutability":"nonpayable","type":"function"},
+  {
+    "inputs": [],
+    "name": "paused",
+    "outputs": [
+      { "internalType": "bool", "name": "", "type": "bool" }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  }
 ];
+
 
 let contract;
 let provider;
@@ -89,6 +112,7 @@ async function init() {
   }
 
   await updateTotalSupply();
+  await updatePauseState();
 
   // hook admin buttons
   document.getElementById("pauseButton").addEventListener("click", pauseContract);
@@ -189,29 +213,102 @@ async function getEthPrice() {
 async function pauseContract() {
   await contract.pause();
   alert("Contract paused.");
+  await updatePauseState();
 }
+
 
 async function unpauseContract() {
   await contract.unpause();
   alert("Contract unpaused.");
+  await updatePauseState();
 }
 
-async function mintTokens() {
-  const to = document.getElementById("mintTo").value;
-  const amount = document.getElementById("mintAmount").value;
-  const value = ethers.parseUnits(amount, 18);
-  await contract.mint(to, value);
-  await updateTotalSupply();
-  alert(`Minted ${amount} GENA to ${to}`);
+
+async function updatePauseState() {
+  if (!contract) return;
+  try {
+    const isPaused = await contract.paused();
+    const stateEl = document.getElementById("contractState");
+    if (stateEl) {
+      stateEl.textContent = isPaused ? "Paused" : "Active";
+      stateEl.style.color = isPaused ? "red" : "green";
+    }
+
+    // enable/disable buttons
+    document.getElementById("pauseButton").disabled = isPaused;
+    document.getElementById("unpauseButton").disabled = !isPaused;
+
+    // optionally disable mint/transfer while paused:
+    document.getElementById("mintButton").disabled = isPaused;
+    document.getElementById("burnButton").disabled = isPaused;
+    document.getElementById("transferButton").disabled = isPaused;
+
+  } catch (err) {
+    console.error("Failed to fetch paused state", err);
+  }
 }
+
+
+async function mintTokens() {
+  try {
+    const to = document.getElementById("mintTo").value;
+    const amount = document.getElementById("mintAmount").value;
+
+    if (!to || !ethers.isAddress(to)) {
+      alert("Please enter a valid recipient address.");
+      return;
+    }
+    if (!amount || isNaN(amount) || Number(amount) <= 0) {
+      alert("Please enter a valid amount to mint.");
+      return;
+    }
+
+    const mintAmount = ethers.parseUnits(amount, 18);
+
+    const totalSupply = await contract.totalSupply();
+    const cap = await contract.cap();  // assuming you implemented cap()
+    const remaining = cap - totalSupply;
+
+    if (mintAmount > remaining) {
+      alert(`Minting would exceed the max cap. Only ${ethers.formatUnits(remaining, 18)} GENA left to mint.`);
+      return;
+    }
+
+    const tx = await contract.mint(to, mintAmount);
+    await tx.wait();
+
+    await updateTotalSupply();
+    alert(`Successfully minted ${amount} GENA to ${to}`);
+  } catch (err) {
+    console.error(err);
+    alert(`Error minting: ${err.reason || err.message}`);
+  }
+}
+
 
 async function burnTokens() {
   const amount = document.getElementById("burnAmount").value;
-  const value = ethers.parseUnits(amount, 18);
-  await contract.burn(value);
-  await updateTotalSupply();
-  alert(`Burned ${amount} GENA`);
+  if (!amount || isNaN(amount) || Number(amount) <= 0) {
+    alert("Please enter a valid burn amount.");
+    return;
+  }
+
+  const confirmBurn = confirm(`Are you sure you want to permanently burn ${amount} GENA from your wallet? This cannot be undone.`);
+  if (!confirmBurn) {
+    return;
+  }
+
+  try {
+    const value = ethers.parseUnits(amount, 18);
+    await contract.burn(value);
+    await updateTotalSupply();
+    alert(`Successfully burned ${amount} GENA from your wallet.`);
+  } catch (err) {
+    console.error(err);
+    alert(`Error burning tokens: ${err.message}`);
+  }
 }
+
 
 async function transferTokens() {
   const to = document.getElementById("transferTo").value;
