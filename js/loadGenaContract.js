@@ -1,9 +1,9 @@
-/*CONFIG = {
+CONFIG = {
   CONTRACT_ADDRESS: "0x5FbDB2315678afecb367f032d93F642f64180aa3",
-  RECIPIENT_ADDRESS: "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+  RECIPIENT_ADDRESS: "0x713ecA7028774A264FF26E29BD40D66935446AeE",
   USDC_ADDRESS: "0xA0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
   GENA_REWARD: "100"
-};*/
+};
 
 const CONTRACT_ADDRESS = CONFIG.CONTRACT_ADDRESS;
 const RECIPIENT_ADDRESS = CONFIG.RECIPIENT_ADDRESS;
@@ -64,8 +64,47 @@ async function connectWallet() {
       await provider.send("eth_requestAccounts", []);
       signer = await provider.getSigner();
       userAccount = await signer.getAddress();
-
+      // get network name
       const network = await provider.getNetwork();
+      let networkName = network.name;
+
+      // fallback for unknown names
+      if (networkName === "unknown") {
+        switch (network.chainId) {
+          case 1:
+            networkName = "Ethereum Mainnet";
+            break;
+          case 5:
+            networkName = "Goerli Testnet";
+            break;
+          case 11155111:
+            networkName = "Sepolia Testnet";
+            break;
+          case 31337:
+            networkName = "Hardhat Local";
+            break;
+          default:
+            networkName = `Chain ID ${network.chainId}`;
+        }
+      }
+
+      // warn if not mainnet
+      /*if (network.chainId !== 1) {
+          alert("⚠️ You are not connected to Ethereum Mainnet. Please switch networks in MetaMask to ensure your donation goes to the correct contract.");
+      }*/
+
+      // get ETH balance
+      const ethBalanceWei = await provider.getBalance(userAccount);
+      const ethBalance = ethers.formatEther(ethBalanceWei);
+
+      // update the info block
+      const infoSpan = document.getElementById("walletInfo");
+      if (infoSpan) {
+        infoSpan.textContent = `Network: ${networkName} | ETH: ${Number(ethBalance).toFixed(4)}`;
+      }
+
+
+      //const network = await provider.getNetwork();
       console.log(`Connected to chain ID ${network.chainId}`);  // purely informational
 
       // update UI
