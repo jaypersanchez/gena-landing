@@ -1,14 +1,16 @@
 CONFIG = {
   CONTRACT_ADDRESS: "0x5FbDB2315678afecb367f032d93F642f64180aa3",
-  RECIPIENT_ADDRESS: "0x713ecA7028774A264FF26E29BD40D66935446AeE",
+  RECIPIENT_ADDRESS: "0x604512a8a123dd26774303e7795895513854fb04",
   USDC_ADDRESS: "0xA0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
-  GENA_REWARD: "100"
+  GENA_REWARD: "100",
+  INFURA_ID: "f131b9d834df427ab57867e0af3e5d95"
 };
 
 const CONTRACT_ADDRESS = CONFIG.CONTRACT_ADDRESS;
 const RECIPIENT_ADDRESS = CONFIG.RECIPIENT_ADDRESS;
 const USDC_ADDRESS = CONFIG.USDC_ADDRESS;
 const GENA_REWARD = CONFIG.GENA_REWARD;
+const INFURA_ID = CONFIG.INFURA_ID;
 
 const ROLES = {
   MINTER_ROLE: "0x" + ethers.id("MINTER_ROLE").substring(2),
@@ -16,18 +18,6 @@ const ROLES = {
   DEFAULT_ADMIN_ROLE: "0x" + "0".repeat(64)
 };
 
-/*const CONTRACT_ABI = [
-  {"inputs":[],"name":"MINTER_ROLE","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},
-  {"inputs":[{"internalType":"uint256","name":"value","type":"uint256"}],"name":"burn","outputs":[],"stateMutability":"nonpayable","type":"function"},
-  {"inputs":[],"name":"totalSupply","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},
-  {"inputs":[],"name":"decimals","outputs":[{"internalType":"uint8","name":"","type":"uint8"}],"stateMutability":"view","type":"function"},
-  {"inputs":[{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"mint","outputs":[],"stateMutability":"nonpayable","type":"function"},
-  {"inputs":[{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"value","type":"uint256"}],"name":"transfer","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},
-  {"inputs":[],"name":"pause","outputs":[],"stateMutability":"nonpayable","type":"function"},
-  {"inputs":[],"name":"unpause","outputs":[],"stateMutability":"nonpayable","type":"function"},
-  {"inputs":[{"internalType":"bytes32","name":"role","type":"bytes32"},{"internalType":"address","name":"account","type":"address"}],"name":"grantRole","outputs":[],"stateMutability":"nonpayable","type":"function"},
-  {"inputs":[{"internalType":"bytes32","name":"role","type":"bytes32"},{"internalType":"address","name":"account","type":"address"}],"name":"revokeRole","outputs":[],"stateMutability":"nonpayable","type":"function"}
-];*/
 
 const CONTRACT_ABI = [
   {"inputs":[],"name":"MINTER_ROLE","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},
@@ -58,88 +48,37 @@ let signer;
 let userAccount;
 
 async function connectWallet() {
-  if (typeof window.ethereum !== "undefined") {
-    try {
-      provider = new ethers.BrowserProvider(window.ethereum);
-      await provider.send("eth_requestAccounts", []);
-      signer = await provider.getSigner();
-      userAccount = await signer.getAddress();
-      // get network name
-      const network = await provider.getNetwork();
-      let networkName = network.name;
+  
 
-      // fallback for unknown names
-      if (networkName === "unknown") {
-        switch (network.chainId) {
-          case 1:
-            networkName = "Ethereum Mainnet";
-            break;
-          case 5:
-            networkName = "Goerli Testnet";
-            break;
-          case 11155111:
-            networkName = "Sepolia Testnet";
-            break;
-          case 31337:
-            networkName = "Hardhat Local";
-            break;
-          default:
-            networkName = `Chain ID ${network.chainId}`;
-        }
-      }
+  try {
+    await web3Modal.clearCachedProvider();
+    const instance = await web3Modal.connect();
+    provider = new ethers.BrowserProvider(instance);
+    signer = await provider.getSigner();
+    userAccount = await signer.getAddress();
 
-      // warn if not mainnet
-      /*if (network.chainId !== 1) {
-          alert("⚠️ You are not connected to Ethereum Mainnet. Please switch networks in MetaMask to ensure your donation goes to the correct contract.");
-      }*/
+    const network = await provider.getNetwork();
+    const balance = await provider.getBalance(userAccount);
 
-      // get ETH balance
-      const ethBalanceWei = await provider.getBalance(userAccount);
-      const ethBalance = ethers.formatEther(ethBalanceWei);
+    const walletInput = document.getElementById("wallet");
+    if (walletInput) walletInput.value = userAccount;
 
-      // update the info block
-      const infoSpan = document.getElementById("walletInfo");
-      if (infoSpan) {
-        infoSpan.textContent = `Network: ${networkName} | ETH: ${Number(ethBalance).toFixed(4)}`;
-      }
-
-
-      //const network = await provider.getNetwork();
-      console.log(`Connected to chain ID ${network.chainId}`);  // purely informational
-
-      // update UI
-      const addrFields = document.querySelectorAll(".wallet-address");
-      addrFields.forEach(el => el.textContent = userAccount);
-
-      // update donation page wallet input
-      const walletInput = document.getElementById("wallet");
-      if (walletInput) {
-        walletInput.value = userAccount;
-      }
-
-      // update admin page #walletAddress if present
-      const walletAddrLabel = document.getElementById("walletAddress");
-      if (walletAddrLabel) {
-        walletAddrLabel.textContent = userAccount;
-      }
-
-      console.log(`Connected wallet: ${userAccount}`);
-      alert(`Connected wallet: ${userAccount}`);
-
-      return userAccount;
-    } catch (err) {
-      console.error(err);
-      alert("Failed to connect wallet or permission denied.");
+    const infoSpan = document.getElementById("walletInfo");
+    if (infoSpan) {
+      infoSpan.textContent = `Connected: ${userAccount.slice(0, 6)}... | ETH: ${Number(ethers.formatEther(balance)).toFixed(4)}`;
     }
-  } else {
-    alert("Please install MetaMask.");
+
+    console.log(`Connected wallet: ${userAccount}`);
+  } catch (err) {
+    console.error("Connection failed:", err);
+    alert("Wallet connection failed.");
   }
 }
 
 async function init() {
   console.log("Initializing admin...");
 
-  await connectWallet();
+  //await connectWallet();
   if (!signer || !userAccount) {
     alert("Wallet connection failed, cannot initialize admin.");
     return;
@@ -398,7 +337,34 @@ window.revokeRole = revokeRole;
 window.addEventListener("DOMContentLoaded", () => {
   const connectBtn = document.getElementById("connectWallet");
   if (connectBtn) {
-    connectBtn.addEventListener("click", init);
+    connectBtn.addEventListener("click", async () => {
+
+      const providerOptions = {
+        injected: {
+          display: {
+            name: "MetaMask",
+            description: "Connect with the MetaMask browser extension"
+          },
+          package: null
+        },
+        walletconnect: {
+          package: window.WalletConnectProvider.default,
+          options: {
+            infuraId: INFURA_ID
+          }
+        }
+      };
+
+        web3Modal = new window.Web3Modal.default({
+          cacheProvider: false,
+          disableInjectedProvider: false,
+          providerOptions
+        });
+
+
+      await connectWallet(); // ✅ show wallet selection popup
+      await init();          // ✅ only run if wallet was selected
+    });
   }
 
   const donationForm = document.getElementById("donationForm");
@@ -406,4 +372,5 @@ window.addEventListener("DOMContentLoaded", () => {
     donationForm.addEventListener("submit", handleDonation);
   }
 });
+
 

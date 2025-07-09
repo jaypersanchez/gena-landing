@@ -5,8 +5,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Purchase GENA Tokens</title>
   <link rel="stylesheet" href="css/styles.css" />
+
+  <!-- ✅ Ethers.js (required for smart contract interactions) -->
   <script src="https://cdn.jsdelivr.net/npm/ethers@6.7.0/dist/ethers.umd.min.js"></script>
+
+  <!-- ✅ WalletConnect Provider (must load BEFORE Web3Modal) -->
+  <script src="https://cdn.jsdelivr.net/npm/@walletconnect/web3-provider@1.8.0/dist/umd/index.min.js"></script>
+
+
+  <!-- ✅ Web3Modal v1 (use .default to access constructor) -->
+  <script src="https://cdn.jsdelivr.net/npm/web3modal@1.9.5/dist/index.js"></script>
 </head>
+
 <body>
 
   <!-- HEADER -->
@@ -74,7 +84,7 @@
 
       <div id="walletBalance" style="margin-top: 1rem; font-weight: bold;"></div>
 
-      <button type="button" onclick="connectWallet()">Connect Wallet</button>
+      <button type="button" id="connectWallet">Connect Wallet</button>
       <button type="submit">Donate</button>
       <span id="walletInfo" style="margin-left: 1rem; font-weight:bold;"></span>
     </form>
@@ -91,10 +101,10 @@
   once GENA goes live on Ethereum after July 31. 
   <br><br>
   Our official donation receiving address is: 
-  <code>0x713ecA7028774A264FF26E29BD40D66935446AeE</code>
+  <code>0x604512a8a123dd26774303e7795895513854fb04</code>
   <br>
   You can verify all incoming donations on 
-  <a href="https://etherscan.io/address/0x713ecA7028774A264FF26E29BD40D66935446AeE" target="_blank">Etherscan</a>.
+  <a href="https://etherscan.io/address/0x604512a8a123dd26774303e7795895513854fb04" target="_blank">Etherscan</a>.
   <br><br>
   If you have any questions, feel free to contact me directly on Telegram at 
   <a href="https://t.me/jaypersanchez" target="_blank">@jaypersanchez</a>.
